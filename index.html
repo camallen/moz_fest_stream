@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=320, initial-scale=1"/>
+	<title>Zooniverse classifications streaming test site</title>
+	<style type="text/css">
+		h5 {
+			text-align: center;
+		}
+	</style>
+	<script type="text/javascript" src="lib/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript">
+	  var ws = null;
+		var message_count = 0;
+		function WebSocketClose() { ws.close(); }
+		function WebSocketTest()
+		{
+			if ("WebSocket" in window)
+			{
+				console.log("WebSocket is supported by your Browser!");
+				// Let us open a web socket
+				ws = new WebSocket( 'ws://'+ location.hostname + ':8084/' );
+				ws.onopen = function()
+				{
+						// Web Socket is connected, send data using send()
+						//ws.send("Message to send");
+						console.log("websocket is connected");
+				};
+				ws.onmessage = function (evt)
+				{
+						var message_data = evt.data;
+						$("#ws_content").html("<p id='message'>" + message_count + " - " + message_data + "</p>")
+						message_count += 1;
+						console.log("message received");
+				};
+				ws.onclose = function()
+				{
+				  	// websocket is closed.
+						console.log("Websocket is closed");
+				};
+			}
+			else
+			{
+				// The browser doesn't support WebSocket
+				$("#ws_content").html("<p>WebSocket NOT supported by your Browser!</p>")
+				console.log("WebSocket NOT supported by your Browser!");
+			}
+		}
+</script>
+</head>
+<body>
+	<h5>Zooniverse Classification Event Stream Test</h5>
+	<div>
+    <a href="javascript:WebSocketTest()">Test the WebSocket</a>
+		|||
+		<a href="javascript:WebSocketClose()">Close the WebSocket</a>
+	</div>
+	<div id="ws_content"></div>
+</body>
+</html>
