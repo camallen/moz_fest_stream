@@ -30,8 +30,8 @@ socketServer.on('connection', function(socket) {
 	lineByLine(file_path, 1000, function(line) {
 		if (counter == 0) {
 			counter +=1
-			headers = line;
-			console.log(headers);
+			headers = line.split(',');
+			//console.log(headers);
 		}
 		else {
 			counter +=1
@@ -57,10 +57,15 @@ socketServer.broadcast = function(data, opts) {
 
 function send_data(message) {
 	if (headers != "") {
-		//TODO: format the data as a json string with '{ 'header' : 'data' } '
-		//message_to_array_of_values
-		//headers to array of values
-		socketServer.broadcast(message);
+		formatted_message = '{'
+		var data = message.split(',');
+		if (data.length != headers.length) {
+			console.log("data and headers length disagree!");
+		}
+		for (var i = 0; i < headers.length; i++) {
+			formatted_message += '\'' + headers[i] + '\':\'' + data[i] + '\',';
+		}
+		socketServer.broadcast(formatted_message + '}');
 	}
 }
 
