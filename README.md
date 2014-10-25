@@ -13,6 +13,8 @@ Installation
   + npm install ws
 4. Install the static content server
   + npm install connect serve-static
+5. Install the line by line stream reader
+  + npm install byline
 
 Getting Started
 ----------------
