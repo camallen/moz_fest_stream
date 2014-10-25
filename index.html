@@ -12,7 +12,9 @@
 	<script type="text/javascript">
 	  var ws = null;
 		var message_count = 0;
+
 		function WebSocketClose() { ws.close(); }
+
 		function WebSocketTest()
 		{
 			if ("WebSocket" in window)
@@ -20,12 +22,14 @@
 				console.log("WebSocket is supported by your Browser!");
 				// Let us open a web socket
 				ws = new WebSocket( 'ws://'+ location.hostname + ':8084/' );
+
 				ws.onopen = function()
 				{
 						// Web Socket is connected, send data using send()
 						//ws.send("Message to send");
 						console.log("websocket is connected");
 				};
+
 				ws.onmessage = function (evt)
 				{
 						var message_data = evt.data;
