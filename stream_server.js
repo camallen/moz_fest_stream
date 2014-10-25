@@ -14,6 +14,7 @@ if ( process.argv.length < 2 ) {
 //var file_path = 'test/test_json_stream_data.json'
 //var file_path = 'test/test_data.csv';
 var file_path = 'data/zoo2MainSpecz.csv',
+    data = null,
     headers = "",
 		counter = 0;
 
@@ -22,22 +23,17 @@ var WEBSOCKET_PORT = process.argv[4] || 8084,
     width = 320,
 	  height = 240;
 
+function send_latest_data() {
+  send_data(data)
+}
+
 // Websocket Data Server
 var socketServer = new(require('ws').Server)({port: WEBSOCKET_PORT});
 socketServer.on('connection', function(socket) {
 	console.log( 'New WebSocket Connection ('+socketServer.clients.length+' total)' );
 
-	lineByLine(file_path, 1000, function(line) {
-		if (counter == 0) {
-			counter +=1
-			headers = line.split(',');
-			//console.log(headers);
-		}
-		else {
-			counter +=1
-			send_data(line);
-		}
-	});
+  //TODO: check the data has changed in the interval from source before pushing down the socket
+  setInterval(function () { send_data(data) }, 500);
 
 	socket.on('close', function(code, message){
 		console.log( 'Disconnected WebSocket ('+socketServer.clients.length+' total)' );
@@ -70,3 +66,17 @@ function send_data(message) {
 }
 
 console.log('Awaiting WebSocket connections on ws://0.0.0.1:'+WEBSOCKET_PORT+'/');
+
+
+lineByLine(file_path, 500, function(line) {
+  console.log('Source input file line number: '+ counter)
+  if (counter == 0) {
+    counter +=1
+    headers = line.split(',');
+    //console.log(headers);
+  }
+  else {
+    counter +=1
+    data = line;
+  }
+});
